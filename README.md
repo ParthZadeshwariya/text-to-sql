@@ -13,6 +13,11 @@ The **Enterprise AI SQL Agent** is designed to bridge the gap between non-techni
 4.  **Visualize**: Automatically determines the best chart type (Bar, Line, Pie, Scatter) and renders it.
 5.  **Analyze**: Provides a databacked summary of the results.
 
+
+## 🧩 Workflow Diagram
+
+![Workflow Diagram](assets/output.png)
+
 ---
 
 ## ✨ Key Features
