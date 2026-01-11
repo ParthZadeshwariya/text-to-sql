@@ -1,0 +1,7 @@
+langchain 
+langgraph 
+pandas 
+matplotlib 
+psycopg2-binary 
+python-dotenv 
+langchain-google-genai
