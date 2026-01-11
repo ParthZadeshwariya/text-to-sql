@@ -1,25 +1,18 @@
-import os
 import pandas as pd
-from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from sqlalchemy import create_engine
 
-load_dotenv()
+# Initialize with a dummy or None. We will overwrite this from app.py
+engine = None 
 
-db_user = os.getenv("DB_USER") or input("Enter DB_USER: ")
-db_password = os.getenv("DB_PASSWORD") or input("Enter DB_PASSWORD: ")
-db_host = os.getenv("DB_HOST") or input("Enter DB_HOST: ")
-db_port = os.getenv("DB_PORT") or input("Enter DB_PORT: ")
-db_name = os.getenv("DB_NAME") or input("Enter DB_NAME: ")
+# LLM Setup
+model = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
 
-model = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash",
-)
-
-# Create connection
-engine = create_engine(f"postgresql+psycopg2://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}")
-
-def get_schema_for_llm():
+# Schema Loader (Now accepts an engine argument)
+def get_schema_for_llm(target_engine):
+    if not target_engine:
+        return "No database connected."
+        
     print("Loading database schema...")
     schema_query = """
     SELECT table_name, column_name, data_type 
@@ -28,7 +21,7 @@ def get_schema_for_llm():
     ORDER BY table_name, ordinal_position;
     """
     try:
-        df = pd.read_sql_query(schema_query, engine)
+        df = pd.read_sql_query(schema_query, target_engine)
         schema_text = "Database Schema:\n\n"
         for table in df['table_name'].unique():
             schema_text += f"Table: {table}\n"
@@ -40,4 +33,5 @@ def get_schema_for_llm():
     except Exception as e:
         return f"Error loading schema: {e}"
 
-SCHEMA_INFO = get_schema_for_llm()
+# Global variable to store schema string
+SCHEMA_INFO = ""

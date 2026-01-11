@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import uuid
 import json
+import src.config as config 
 from .state import SQLState
 from .config import model, engine, SCHEMA_INFO
 
@@ -13,7 +14,7 @@ def text_to_sql(state: SQLState):
     prompt = f"""You are a SQL expert. Convert the following natural language question into a valid PostgreSQL query.
     
         Database Schema:
-        {SCHEMA_INFO}
+        {config.SCHEMA_INFO}
 
         Question: {text}
 
@@ -45,6 +46,7 @@ def text_to_sql(state: SQLState):
 
 def execute_query(state: SQLState):
     try:
+        engine = config.engine
         query = state['query'].replace("```sql", "").replace("```", "").strip()
         df = pd.read_sql_query(query, engine)
         return {"query_result": df.to_json()}
@@ -63,14 +65,11 @@ def analyze_result(state: SQLState):
     """
 
     if visualization_path:
-        instructions += f"""
-        \nIMPORTANT: A visualization graph has been generated for this data. 
-        It is located at this path: `{visualization_path}`
+        instructions += """
+        \nNOTE: A visualization graph has been generated for this data and will be displayed below your response.
         
-        You MUST include this graph in your response using standard Markdown image syntax:
-        ![Graph of Analysis]({visualization_path})
-        
-        Place the graph in the response where it makes the most sense contextually (usually after the data summary).
+        You should refer to the graph in your analysis (e.g., "As shown in the visualization..."), 
+        but DO NOT try to embed the image yourself using Markdown tags.
         """
 
     prompt = f"""
