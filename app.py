@@ -35,7 +35,8 @@ with st.sidebar:
         api_key = st.text_input("Google API Key", type="password")
         if api_key:
             os.environ["GOOGLE_API_KEY"] = api_key
-            # Reload model if needed, but usually env var is enough for next invoke
+            # Initialize model dynamically
+            app_config.model = app_config.ChatGoogleGenerativeAI(model="gemini-2.0-flash")
 
     # 2. Database Connection Form
     with st.form("db_connection"):
@@ -104,6 +105,10 @@ if prompt := st.chat_input("Ex: Show me the monthly revenue trend for 2017..."):
     # 1. Validation
     if not st.session_state.db_status:
         st.error("Please connect to a database first (Sidebar)!")
+        st.stop()
+    
+    if not os.environ.get("GOOGLE_API_KEY"):
+        st.error("Please enter your Google API Key (Sidebar)!")
         st.stop()
 
     # 2. Append User Message

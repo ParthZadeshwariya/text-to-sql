@@ -4,7 +4,7 @@ import uuid
 import json
 import src.config as config 
 from .state import SQLState
-from .config import model, engine, SCHEMA_INFO
+from .config import engine, SCHEMA_INFO
 
 def text_to_sql(state: SQLState):
     """
@@ -40,7 +40,7 @@ def text_to_sql(state: SQLState):
         """
     
     iteration = state["iteration"]
-    response = model.invoke(prompt).content
+    response = config.model.invoke(prompt).content
     return {"query": response, "iteration": iteration + 1}
 
 
@@ -82,7 +82,7 @@ def analyze_result(state: SQLState):
     """
 
     # Get response from LLM
-    response = model.invoke(prompt).content
+    response = config.model.invoke(prompt).content
     
     return {
         "final_answer": response
@@ -111,7 +111,7 @@ def error_solver(state: SQLState):
         Generate a corrected SQL query. Return ONLY the SQL query:
     """
 
-    response = model.invoke(prompt).content
+    response = config.model.invoke(prompt).content
     
     return {
         "query": response,
@@ -151,7 +151,7 @@ def decide_graph_need(state: SQLState):
     """
 
     # 3. Invoke Model
-    response = model.invoke(prompt).content
+    response = config.model.invoke(prompt).content
     
     # 4. Clean and Parse JSON
     try:

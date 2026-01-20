@@ -5,8 +5,8 @@ from sqlalchemy import create_engine
 # Initialize with a dummy or None. We will overwrite this from app.py
 engine = None 
 
-# LLM Setup
-model = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
+# LLM Setup - Initialized in app.py after API Key check
+model = None
 
 # Schema Loader (Now accepts an engine argument)
 def get_schema_for_llm(target_engine):
